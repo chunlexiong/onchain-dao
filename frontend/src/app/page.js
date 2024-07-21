@@ -11,9 +11,10 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { formatEther } from "viem/utils";
 import { useAccount, useBalance, useReadContract, useWriteContract } from "wagmi";
-import { readContract, waitForTransaction } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
 import styles from "./page.module.css";
 import { Inter } from "next/font/google";
+import { config } from "./config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -71,14 +72,12 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const tx = await writeContract({
+      writeContract({
         address: CryptoDevsDAOAddress,
         abi: CryptoDevsDAOABI,
         functionName: "createProposal",
         args: [fakeNftTokenId],
       });
-
-      await waitForTransaction(tx);
     } catch (error) {
       console.error(error);
       window.alert(error);
@@ -89,7 +88,7 @@ export default function Home() {
   // Function to fetch a proposal by it's ID
   async function fetchProposalById(id) {
     try {
-      const proposal = await readContract({
+      const proposal = await readContract(config, {
         address: CryptoDevsDAOAddress,
         abi: CryptoDevsDAOABI,
         functionName: "proposals",
@@ -136,14 +135,12 @@ export default function Home() {
   async function voteForProposal(proposalId, vote) {
     setLoading(true);
     try {
-      const tx = await writeContract({
+      writeContract({
         address: CryptoDevsDAOAddress,
         abi: CryptoDevsDAOABI,
         functionName: "voteOnProposal",
         args: [proposalId, vote === "YAY" ? 0 : 1],
       });
-
-      await waitForTransaction(tx);
     } catch (error) {
       console.error(error);
       window.alert(error);
@@ -155,14 +152,13 @@ export default function Home() {
   async function executeProposal(proposalId) {
     setLoading(true);
     try {
-      const tx = await writeContract({
+      writeContract({
         address: CryptoDevsDAOAddress,
         abi: CryptoDevsDAOABI,
         functionName: "executeProposal",
         args: [proposalId],
       });
 
-      await waitForTransaction(tx);
     } catch (error) {
       console.error(error);
       window.alert(error);
@@ -174,14 +170,12 @@ export default function Home() {
   async function withdrawDAOEther() {
     setLoading(true);
     try {
-      const tx = await writeContract({
+      writeContract({
         address: CryptoDevsDAOAddress,
         abi: CryptoDevsDAOABI,
         functionName: "withdrawEther",
         args: [],
       });
-
-      await waitForTransaction(tx);
     } catch (error) {
       console.error(error);
       window.alert(error);
